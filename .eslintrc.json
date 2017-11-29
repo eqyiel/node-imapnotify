@@ -1,0 +1,30 @@
+{
+  "parser": "babel-eslint",
+  "root": true,
+  "extends": [
+    "airbnb-base",
+    "prettier",
+    "prettier/flowtype",
+    "plugin:flowtype/recommended"
+  ],
+  "plugins": ["flowtype"],
+  "env": {
+    "browser": false,
+    "node": true
+  },
+  "rules": {
+    "spaced-comment": [
+      "error",
+      "always",
+      {
+        "line": {
+          "markers": [":", "::"]
+        },
+        "block": {
+          "markers": [":", "::"],
+          "balanced": false
+        }
+      }
+    ]
+  }
+}

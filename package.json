@@ -12,21 +12,28 @@
   },
   "bin": "bin/imapnotify",
   "dependencies": {
-    "bunyan": "~1.8.5",
+    "debug": "^3.1.0",
     "imap": "~0.8.14",
-    "mkdirp": "~0.5.0",
-    "optimist": "~0.6.1",
-    "printf": "~0.2.0",
-    "winston": "~0.8.3",
-    "xenvar": "~0.5.1"
+    "yargs": "^10.0.3"
   },
   "keywords": ["imap", "notify", "mail", "email"],
   "license": "MIT",
   "devDependencies": {
-    "prettier": "^1.8.2"
+    "babel-eslint": "^8.0.2",
+    "eslint": "^4.9.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-flowtype": "^2.39.1",
+    "eslint-plugin-import": "^2.7.0",
+    "flow-typed": "^2.2.3",
+    "npm-run-all": "^4.1.2",
+    "prettier": "^1.9.1"
   },
   "scripts": {
-    "lint": "prettier ./bin/**/* ./README.md --write"
+    "run-prettier": "prettier ./bin/**/* ./src/**/* ./README.md --write",
+    "run-eslint": "eslint --config ./.eslintrc.json ./bin/**/* ./src/**/*",
+    "run-flow": "flow check",
+    "lint": "npm-run-all run-prettier run-eslint run-flow"
   },
   "prettier": {
     "trailingComma": "es5",

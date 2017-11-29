@@ -154,3 +154,8 @@ yaourt -S nodejs-imapnotify
 ```
 imapnotify -c /path/to/config
 ```
+
+# Hacking
+
+If you use nix, run nix-shell in the root of this repo to set up the target
+environment.
