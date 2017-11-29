@@ -12,19 +12,24 @@
   },
   "bin": "bin/imapnotify",
   "dependencies": {
+    "bunyan": "~1.8.5",
     "imap": "~0.8.14",
+    "mkdirp": "~0.5.0",
     "optimist": "~0.6.1",
     "printf": "~0.2.0",
     "winston": "~0.8.3",
-    "mkdirp": "~0.5.0",
-    "xenvar": "~0.5.1",
-    "bunyan": "~1.8.5"
+    "xenvar": "~0.5.1"
   },
-  "keywords": [
-    "imap",
-    "notify",
-    "mail",
-    "email"
-    ],
-    "license": "MIT"
+  "keywords": ["imap", "notify", "mail", "email"],
+  "license": "MIT",
+  "devDependencies": {
+    "prettier": "^1.8.2"
+  },
+  "scripts": {
+    "lint": "prettier ./bin/**/* --write"
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "singleQuote": true
+  }
 }
