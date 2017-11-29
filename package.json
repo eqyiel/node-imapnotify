@@ -26,7 +26,7 @@
     "prettier": "^1.8.2"
   },
   "scripts": {
-    "lint": "prettier ./bin/**/* --write"
+    "lint": "prettier ./bin/**/* ./README.md --write"
   },
   "prettier": {
     "trailingComma": "es5",

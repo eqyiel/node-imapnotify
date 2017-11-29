@@ -1,6 +1,7 @@
 # imapnotify
 
-Execute scripts on IMAP mailbox changes (new/deleted/updated messages) using IDLE.
+Execute scripts on IMAP mailbox changes (new/deleted/updated messages) using
+IDLE.
 
 # config
 
@@ -38,7 +39,7 @@ Execute scripts on IMAP mailbox changes (new/deleted/updated messages) using IDL
 ```
     onSIGNAL: a command to run when `SIGNAL` is received.
     onSIGNALpost: a command to run after onSINGAL
-``` 
+```
 
 Example:
 
@@ -53,19 +54,20 @@ Example:
 
 # config as a node module
 
-Since we load the config file with require(), we can get away with any nodejs 
-module instead of just json.
-This allows us to be more flexible with the configuration.
+Since we load the config file with require(), we can get away with any nodejs
+module instead of just json. This allows us to be more flexible with the
+configuration.
 
 In particular, you one can use it to load password from a script rather than
 having to store it in plain text.
 
-Important: config-module must be `requirable` (in your $NODE_PATH or
-given by an absolute path)
+Important: config-module must be `requirable` (in your $NODE_PATH or given by an
+absolute path)
 
 Using the latest (>0.12) version of nodejs, one can write myconfig.js as
-follows.  Assuming the script ~/getpass.sh prints out your password.
-(execSync is a v0.12 feature)
+follows. Assuming the script ~/getpass.sh prints out your password. (execSync is
+a v0.12 feature)
+
 ```javascript
     var child_process = require('child_process');
 
@@ -90,15 +92,15 @@ Then you can use
 ```bash
     $ imapnotify -c ~/.config/imap_notify/myconfig.js
 ```
+
 Thanks Matthew, for pointing that out!
 
 ## substitutions
 
 `%s` in `onNotify` and `onNotifyPost` is replaced by the box name.
 
-`/` symbol (slash) is replaced by `-` symbol (minus) so that
-`inbox/junk` becomes `inbox-junk`
-
+`/` symbol (slash) is replaced by `-` symbol (minus) so that `inbox/junk`
+becomes `inbox-junk`
 
 # example mbsync configuration
 
@@ -144,6 +146,7 @@ archlinux aur package:
 ```
 yaourt -S nodejs-imapnotify
 ```
+
 (bonus: systemd.service file)
 
 # usage
