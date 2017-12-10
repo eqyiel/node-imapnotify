@@ -1,0 +1,7 @@
+language: nix
+script:
+    - nix-build tests/mail-server.nix
+
+cache:
+  directories:
+    - /nix/store
