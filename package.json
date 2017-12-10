@@ -30,10 +30,11 @@
     "prettier": "^1.9.1"
   },
   "scripts": {
-    "run-prettier": "prettier ./bin/**/* ./src/**/* ./README.md --write",
+    "lint": "npm-run-all run-prettier run-eslint run-flow",
     "run-eslint": "eslint --config ./.eslintrc.json ./bin/**/* ./src/**/*",
     "run-flow": "flow check",
-    "lint": "npm-run-all run-prettier run-eslint run-flow"
+    "run-prettier": "prettier ./bin/**/* ./src/**/* ./README.md --write",
+    "test": "nix-build ./nix/run-tests.nix"
   },
   "prettier": {
     "trailingComma": "es5",
