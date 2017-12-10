@@ -11,12 +11,15 @@ function run(cmd /*: string */) /*: Promise<void> */ {
     exec(cmd, (error, stdout, stderr) => {
       if (error) {
         debug(`Error running ${cmd}`);
-        debug(stderr);
         return reject(error);
       }
 
-      debug(stdout);
-      return resolve();
+      if (stderr.length) {
+        debug(`Error running ${cmd}: %s`, stderr);
+        return reject(new Error(stderr));
+      }
+
+      return resolve(stdout);
     });
   });
 }

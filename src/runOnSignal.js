@@ -8,11 +8,16 @@ const debug = createDebug('runOnSignal');
 
 function runOnSignal(
   partialSignal /*: string */,
-  config /*: Config */
-) /*: Promise<void> */ {
+  config /*: Config */,
+  callback /*: () => void */ = () => {}
+) /*: void */ {
   const signal = `SIG${partialSignal}`;
   debug(`trying running on${signal} commands`);
-  return executeCommands(config[`on${signal}`], config[`on${signal}post`]);
+  executeCommands(config[`on${signal}`], config[`on${signal}post`])
+    .then(() => callback())
+    .catch(() => {
+      callback();
+    });
 }
 
 module.exports = runOnSignal;

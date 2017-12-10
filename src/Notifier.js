@@ -1,6 +1,7 @@
 const Imap = require('imap');
 const createDebug = require('./createDebug');
 const executeOnNotify = require('./executeOnNotify');
+const run = require('./run');
 
 const debug = createDebug('Notifier');
 
@@ -13,10 +14,15 @@ class Notifier {
 
   addBox(box, cb /*: () => void */ = () => {}) {
     if (this.connections[box]) {
+      debug('replacing box %s', box);
       delete this.connections[box];
+    } else {
+      debug('adding box %s', box);
     }
 
     const connection = this.createConnection();
+    debug('created connection: %O', connection);
+
     this.connections[box] = connection;
 
     connection.once('ready', () => {
@@ -89,12 +95,13 @@ class Notifier {
 
   createConnection() {
     return new Imap({
-      user: this.config.username,
+      user: this.config.user,
       password: this.config.password,
       host: this.config.host,
       port: this.config.port,
-      tls: this.config.tls || false,
+      tls: !!this.config.tls,
       tlsOptions: this.config.tlsOptions,
+      debug: debug,
     });
   }
 

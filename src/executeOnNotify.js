@@ -4,10 +4,14 @@
 const util = require('util');
 const executeCommands = require('./executeCommands');
 const isEventMap = require('./isEventMap');
+const createDebug = require('./createDebug');
+
+const debug = createDebug('executeOnNotify');
 
 function executeOnNotify(
   config /*: Config */
 ) /*: (box: string, event: string) => Promise<void> */ {
+  debug('creating executeOnNotify callback');
   return function notify(box, event) {
     const formattedBox = box.toLowerCase().replace('/', '-');
     const formattedCommand = util.format(
@@ -22,6 +26,8 @@ function executeOnNotify(
         : config.onNotifyPost,
       formattedBox
     );
+
+    debug('%O', { formattedBox, formattedCommand, formattedPost });
     return executeCommands(formattedCommand, formattedPostCommand);
   };
 }

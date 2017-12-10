@@ -1,11 +1,15 @@
 // @flow
 
 /*:: import type { Config } from './types'; */
-
+const createDebug = require('./createDebug');
 const eventMap = require('./eventMap');
 const isEventMap = require('./isEventMap');
 
+const debug = createDebug('validateConfigurationObject');
+
 function validateConfigurationObject(config /*: Config */) /*: void */ {
+  debug('using configuration: %O', config);
+
   ['user', 'host'].forEach(element => {
     if (typeof config[element] !== 'string') {
       throw new Error(`configuration file: ${element} must be a string`);
@@ -67,13 +71,16 @@ function validateConfigurationObject(config /*: Config */) /*: void */ {
     );
   }
 
-  if (config.tls !== undefined && config.tls !== 'boolean') {
+  if (config.tls !== undefined && typeof config.tls !== 'boolean') {
     throw new Error(
       `configuration file: if tls is defined it must be a boolean`
     );
   }
 
-  if (config.tlsOptions !== undefined && config.tlsOptions !== 'object') {
+  if (
+    config.tlsOptions !== undefined &&
+    typeof config.tlsOptions !== 'object'
+  ) {
     throw new Error(
       `configuration file: if tlsOptions is defined it must be an object`
     );
