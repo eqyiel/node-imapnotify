@@ -9,8 +9,6 @@ let
 in (import "${nixosUnstableDerivation}/nixos/tests/make-test.nix" ({ pkgs, lib, ... }: {
   machine =
     let
-      nixos-mailserver = import ../nix/nixos-mailserver.nix {};
-
       imapnotify-config = (builtins.toJSON {
         host = "mail.example.com";
         port = 993;
@@ -26,8 +24,16 @@ in (import "${nixosUnstableDerivation}/nixos/tests/make-test.nix" ({ pkgs, lib, 
       });
 
 
-    in { config, pkgs, ... }: {
-        imports = [ "${nixos-mailserver}/default.nix" ];
+    in { config, lib, pkgs, ... }: {
+
+      imports = [
+        (import ((import <nixpkgs> {}).fetchFromGitHub {
+          owner = "r-raymond";
+          repo = "nixos-mailserver";
+          rev = "refs/tags/v2.0.2";
+          sha256 = "117w8da5qk1rchdy6lzx3galw1hks4fpdxz6bglv5may44cz1rqf";
+        }) { inherit config lib pkgs; })
+      ];
 
         networking.extraHosts = ''
           127.0.0.1 example.com
