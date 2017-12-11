@@ -1,45 +1,15 @@
-import <nixpkgs/nixos/tests/make-test.nix> {
+{ nixpkgs ? <nixpkgs>, system ? builtins.currentSystem }:
+
+let
+  nixosUnstableDerivation = (import ../nix/nixos-unstable.nix {
+    inherit nixpkgs system;
+  });
+
+  nixosUnstable = import nixosUnstableDerivation { inherit system; };
+in (import "${nixosUnstableDerivation}/nixos/tests/make-test.nix" ({ pkgs, lib, ... }: {
   machine =
     let
-      inherit (import <nixpkgs> {}) pkgs;
-
-      nixos-mailserver = (pkgs.stdenv.mkDerivation rec {
-        name = "nixos-mailserver-${version}";
-        version = "2017-12-10";
-
-        src = pkgs.fetchFromGitHub {
-          owner = "r-raymond";
-          repo = "nixos-mailserver";
-          rev = "5068fd1fbd428f3ae59bf2b1bcd775cc85dcc198";
-          sha256 = "1bcgf354j6w6da2spwij12nzby4p4ry2kj6mankdjmk8yacxiqnx";
-        };
-
-        dontBuild = true;
-        preferLocalBuild = true;
-
-        installPhase = ''
-          cp -a . $out
-        '';
-      });
-
-      msmtprc = ''
-        account        test-account
-        host           mail.example.com
-        port           587
-        from           sender@example.com
-        user           sender@example.com
-        password       hunter2
-      '';
-
-      message = ''
-        From: Sender <sender@example.com>
-        To: Recipient <recipient@example.com>
-        Subject: This is a test email from sender@example.com to recipient@example.com
-
-        Hello Recipient,
-
-        How's it going?
-      '';
+      nixos-mailserver = import ../nix/nixos-mailserver.nix {};
 
       imapnotify-config = (builtins.toJSON {
         host = "mail.example.com";
@@ -57,7 +27,7 @@ import <nixpkgs/nixos/tests/make-test.nix> {
 
 
     in { config, pkgs, ... }: {
-        imports = [ ("${nixos-mailserver}/default.nix") ];
+        imports = [ "${nixos-mailserver}/default.nix" ];
 
         networking.extraHosts = ''
           127.0.0.1 example.com
@@ -80,21 +50,44 @@ import <nixpkgs/nixos/tests/make-test.nix> {
           };
         };
 
-        environment.systemPackages = with pkgs; [ msmtp ];
+        environment.systemPackages = with pkgs; [
+          msmtp
+          (import ./.. { nixpkgs = nixosUnstable; })
+        ];
       };
 
-      testScript = ''
-        $machine->start;
-        $machine->waitForUnit("multi-user.target");
-        subtest "recipient should receive a notification", sub {
-          $client->succeed("echo '${msmtprc}' > ~/.msmtprc");
-          $client->succeed("echo '${message}' > mail.txt");
-          $client->succeed("msmtp -a test --tls=on --tls-certcheck=off --auth=on sender\@example.com < mail.txt >&2");
-        };
+  testScript =
+    let
+      inherit (nixosUnstable) pkgs;
 
-        subtest "imap retrieving mail 2", sub {
-          $client->succeed("sleep 5");
-          # test that notification was received??
-        };
+      msmtprc = pkgs.writeText "msmtprc" ''
+        account        test-account
+        host           mail.example.com
+        port           587
+        from           sender@example.com
+        user           sender@example.com
+        password       hunter2
       '';
-    }
+
+      message = pkgs.writeText "message" ''
+        From: Sender <sender@example.com>
+        To: Recipient <recipient@example.com>
+        Subject: This is a test email from sender@example.com to recipient@example.com
+
+        Hello Recipient,
+
+        How's it going?
+      '';
+    in ''
+      $machine->start;
+      $machine->waitForUnit("multi-user.target");
+      subtest "recipient should receive a notification", sub {
+        $machine->succeed("msmtp -C ${msmtprc} -a test-account --tls=on --tls-certcheck=off --auth=on recipient\@example.com < ${message} >&2");
+      };
+
+      subtest "imap retrieving mail 2", sub {
+        $machine->succeed("sleep 5");
+        # test that notification was received??
+      };
+    '';
+})) nixosUnstable
